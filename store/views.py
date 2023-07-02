@@ -6,6 +6,12 @@ from rest_framework.mixins import (
     DestroyModelMixin,
 )
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.permissions import (
+    IsAdminUser,
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
 
 from store.models import (
     Address,
@@ -34,11 +40,22 @@ from store.serializers import (
 
 
 class CollectionViewSet(ModelViewSet):
+    def get_permissions(self):
+        if self.request.method in ["GET", "HEAD", "OPTIONS"]:
+            return [AllowAny()]
+        return [IsAdminUser()]
+
     queryset = Collection.objects.prefetch_related("products").all()
     serializer_class = CollectionSerializer
+    permission_classes = []
 
 
 class ProductViewSet(ModelViewSet):
+    def get_permissions(self):
+        if self.request.method in ["GET", "HEAD", "OPTIONS"]:
+            return [AllowAny()]
+        return [IsAdminUser()]
+
     queryset = (
         Product.objects.select_related("collection").prefetch_related("images").all()
     )
@@ -46,6 +63,11 @@ class ProductViewSet(ModelViewSet):
 
 
 class ProductImageViewSet(ModelViewSet):
+    def get_permissions(self):
+        if self.request.method in ["GET", "HEAD", "OPTIONS"]:
+            return [AllowAny()]
+        return [IsAdminUser()]
+
     def get_queryset(self):
         return ProductImage.objects.select_related("product").filter(
             product_id=self.kwargs["product_pk"]
@@ -55,11 +77,14 @@ class ProductImageViewSet(ModelViewSet):
 
 
 class CustomerViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Customer.objects.select_related("user").all()
     serializer_class = CustomerSerializer
 
 
 class OrderViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         if self.request.user.is_staff:
             return Order.objects.select_related("customer").all()
@@ -70,6 +95,8 @@ class OrderViewSet(ModelViewSet):
 
 
 class OrderItemViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         return (
             OrderItem.objects.select_related("order")
