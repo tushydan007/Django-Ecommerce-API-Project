@@ -9,9 +9,6 @@ from uuid import uuid4
 class Collection(models.Model):
     title = models.CharField(max_length=255, validators=[MinLengthValidator(3)])
 
-    def __str__(self):
-        return self.title
-
 
 class Product(models.Model):
     title = models.CharField(max_length=255, validators=[MinLengthValidator(3)])
@@ -22,9 +19,6 @@ class Product(models.Model):
     collection = models.ForeignKey(
         Collection, on_delete=models.PROTECT, related_name="products"
     )
-
-    def __str__(self):
-        return self.title
 
 
 class ProductImage(models.Model):
@@ -50,9 +44,6 @@ class Customer(models.Model):
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE
     )
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
 
 
 class Order(models.Model):

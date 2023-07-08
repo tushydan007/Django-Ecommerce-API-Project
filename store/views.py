@@ -30,6 +30,7 @@ from store.serializers import (
     CartItemSerializer,
     CartSerializer,
     CollectionSerializer,
+    CreateOrderSerializer,
     CustomerSerializer,
     OrderItemSerializer,
     OrderSerializer,
@@ -91,7 +92,13 @@ class OrderViewSet(ModelViewSet):
         customer = Customer.objects.only("id").get(user_id=self.request.user.id)
         return Order.objects.filter(customer_id=customer)
 
-    serializer_class = OrderSerializer
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CreateOrderSerializer
+        return OrderSerializer
+
+    def get_serializer_context(self):
+        return {"user_id": self.request.user.id}
 
 
 class OrderItemViewSet(ModelViewSet):
