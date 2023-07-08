@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.mixins import (
     CreateModelMixin,
@@ -37,6 +38,7 @@ from store.serializers import (
     ProductImageSerializer,
     ProductSerializer,
     UpdateCartItemSerializer,
+    UpdateOrderSerializer,
 )
 
 
@@ -84,6 +86,7 @@ class CustomerViewSet(ModelViewSet):
 
 
 class OrderViewSet(ModelViewSet):
+    http_method_names = ["get", "patch", "post", "delete", "head", "options"]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -95,10 +98,19 @@ class OrderViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "POST":
             return CreateOrderSerializer
+        if self.request.method == "PATCH":
+            return UpdateOrderSerializer
         return OrderSerializer
 
-    def get_serializer_context(self):
-        return {"user_id": self.request.user.id}
+    def create(self, request, *args, **kwargs):
+        serializer = CreateOrderSerializer(
+            data=request.data, context={"user_id": self.request.user.id}
+        )
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        serializer = OrderSerializer(order)
+
+        return Response(serializer.data)
 
 
 class OrderItemViewSet(ModelViewSet):
