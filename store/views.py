@@ -76,6 +76,9 @@ class ProductImageViewSet(ModelViewSet):
             product_id=self.kwargs["product_pk"]
         )
 
+    def get_serializer_context(self):
+        return {"product_id": self.kwargs["product_pk"]}
+
     serializer_class = ProductImageSerializer
 
 
