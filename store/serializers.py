@@ -15,9 +15,11 @@ from store.models import (
 
 
 class CollectionSerializer(serializers.ModelSerializer):
+    product_count = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Collection
-        fields = ["id", "title"]
+        fields = ["id", "title", "product_count"]
 
 
 class ProductImageSerializer(serializers.ModelSerializer):

@@ -150,8 +150,24 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
+    "LOGIN_FIELD": "email",
+    # "USER_CREATE_PASSWORD_RETYPE": True,
+    "PASSWORD_CHANGED_EMAIL_CONFIRMATION": True,
+    "SEND_CONFIRMATION_EMAIL": True,
+    "SEND_CONFIRMATION_EMAIL": True,
+    "SET_PASSWORD_RETYPE": True,
+    "PASSWORD_RESET_CONFIRMATION_URL": "password/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
     "SERIALIZERS": {
-        "user_create": "user.serializers.CreateUserSerializer",
-    }
+        "user_create": "user.serializers.UserCreateSerializer",
+    },
 }
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "dboy76382@gmail.com"
+EMAIL_HOST_PASSWORD = "xnaqishjgdtopebp"
+EMAIL_USE_TLS = True

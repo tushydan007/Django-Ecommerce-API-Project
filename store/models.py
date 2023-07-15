@@ -14,7 +14,7 @@ class Collection(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=255, validators=[MinLengthValidator(3)])
-    description = models.TextField(max_length=500, validators=[MinLengthValidator(20)])
+    description = models.TextField(max_length=500, validators=[MinLengthValidator(8)])
     price = models.IntegerField(validators=[MinValueValidator(1)])
     inventory = models.IntegerField(validators=[MinValueValidator(1)])
     last_update = models.DateTimeField(auto_now=True)
@@ -24,7 +24,7 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
-    image = models.ImageField(upload_to="store/media", validators=[validate_file_size])
+    image = models.ImageField(upload_to="store/images", validators=[validate_file_size])
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="images"
     )

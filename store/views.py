@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from django.db.models import Count
 from rest_framework.mixins import (
     CreateModelMixin,
     RetrieveModelMixin,
@@ -48,9 +49,21 @@ class CollectionViewSet(ModelViewSet):
             return [AllowAny()]
         return [IsAdminUser()]
 
-    queryset = Collection.objects.prefetch_related("products").all()
+    queryset = (
+        Collection.objects.annotate(product_count=Count("products"))
+        .prefetch_related("products")
+        .all()
+    )
     serializer_class = CollectionSerializer
-    permission_classes = []
+
+    def destroy(self, request, *args, **kwargs):
+        if Product.objects.filter(collection_id=self.kwargs["pk"]).count() > 0:
+            return Response(
+                {
+                    "Error": "Collection cannot be deleted because it is associated with at least one product"
+                }
+            )
+        return super().destroy(request, *args, **kwargs)
 
 
 class ProductViewSet(ModelViewSet):
@@ -63,6 +76,15 @@ class ProductViewSet(ModelViewSet):
         Product.objects.select_related("collection").prefetch_related("images").all()
     )
     serializer_class = ProductSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        if OrderItem.objects.filter(product_id=self.kwargs["pk"]).count() > 0:
+            return Response(
+                {
+                    "Error": "Product cannot be deleted because it is associated with at least one order item"
+                }
+            )
+        return super().destroy(request, *args, **kwargs)
 
 
 class ProductImageViewSet(ModelViewSet):
@@ -83,9 +105,18 @@ class ProductImageViewSet(ModelViewSet):
 
 
 class CustomerViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Customer.objects.select_related("user").all()
     serializer_class = CustomerSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        if Order.objects.filter(customer_id=self.kwargs["pk"]).count() > 0:
+            return Response(
+                {
+                    "Error": "Customer cannot be deleted because it is associated with at least one order"
+                }
+            )
+        return super().destroy(request, *args, **kwargs)
 
 
 class OrderViewSet(ModelViewSet):
