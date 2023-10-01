@@ -12,6 +12,7 @@ from .models import (
     Address,
     Cart,
     CartItem,
+    ProductImage,
 )
 
 
@@ -38,6 +39,11 @@ class CollectionAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(product_count=Count("products"))
 
 
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 0
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = [
@@ -51,6 +57,7 @@ class ProductAdmin(admin.ModelAdmin):
     ]
     list_editable = ["price", "description", "inventory"]
     search_fields = ["title", "price", "last_update"]
+    inlines = [ProductImageInline]
 
 
 @admin.register(Customer)
