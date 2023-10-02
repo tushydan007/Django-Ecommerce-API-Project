@@ -8,8 +8,10 @@ from store.views import (
     CustomerViewSet,
     OrderItemViewSet,
     OrderViewSet,
+    ProductReviewViewSet,
     ProductViewSet,
     ProductImageViewSet,
+    CollectionProductViewSet,
 )
 
 
@@ -26,12 +28,19 @@ order_router = routers.NestedDefaultRouter(router, "orders", lookup="order")
 cart_router = routers.NestedDefaultRouter(router, "carts", lookup="cart")
 customer_router = routers.NestedDefaultRouter(router, "customers", lookup="customer")
 product_router = routers.NestedDefaultRouter(router, "products", lookup="product")
+collection_router = routers.NestedDefaultRouter(
+    router, "collections", lookup="collection"
+)
 
 # nested routes
 order_router.register("items", OrderItemViewSet, basename="order_items")
 cart_router.register("items", CartItemViewSet, basename="cart_items")
 customer_router.register("addresses", AddressViewSet, basename="addresses")
 product_router.register("images", ProductImageViewSet, basename="product_images")
+product_router.register("reviews", ProductReviewViewSet, basename="product_reviews")
+collection_router.register(
+    "products", CollectionProductViewSet, basename="collection_products"
+)
 
 
 urlpatterns = (
@@ -40,4 +49,5 @@ urlpatterns = (
     + cart_router.urls
     + customer_router.urls
     + product_router.urls
+    + collection_router.urls
 )

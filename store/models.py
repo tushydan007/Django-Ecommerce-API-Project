@@ -10,6 +10,10 @@ from store.validators import validate_file_size
 
 class Collection(models.Model):
     title = models.CharField(max_length=255, validators=[MinLengthValidator(3)])
+    image_url = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Product(models.Model):
@@ -20,6 +24,15 @@ class Product(models.Model):
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(
         Collection, on_delete=models.PROTECT, related_name="products"
+    )
+
+
+class ProductReview(models.Model):
+    description = models.TextField()
+    customer_name = models.CharField(max_length=255)
+    date_created = models.DateTimeField(auto_now_add=True)
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="reviews"
     )
 
 

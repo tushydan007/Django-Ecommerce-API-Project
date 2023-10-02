@@ -18,8 +18,8 @@ from .models import (
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "product_count"]
-    list_editable = ["title"]
+    list_display = ["id", "title", "product_count", "image_url"]
+    list_editable = ["title", "image_url"]
     search_fields = ["title"]
 
     @admin.display(ordering="product_count")

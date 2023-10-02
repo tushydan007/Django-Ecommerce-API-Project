@@ -25,6 +25,7 @@ from store.models import (
     OrderItem,
     Product,
     ProductImage,
+    ProductReview,
 )
 from store.serializers import (
     AddCartItemSerializer,
@@ -37,6 +38,7 @@ from store.serializers import (
     OrderItemSerializer,
     OrderSerializer,
     ProductImageSerializer,
+    ProductReviewSerializer,
     ProductSerializer,
     UpdateCartItemSerializer,
     UpdateOrderSerializer,
@@ -64,6 +66,15 @@ class CollectionViewSet(ModelViewSet):
                 }
             )
         return super().destroy(request, *args, **kwargs)
+
+
+class CollectionProductViewSet(ModelViewSet):
+    def get_queryset(self):
+        return Product.objects.select_related("collection").filter(
+            collection_id=self.kwargs["collection_pk"]
+        )
+
+    serializer_class = ProductSerializer
 
 
 class ProductViewSet(ModelViewSet):
@@ -102,6 +113,15 @@ class ProductImageViewSet(ModelViewSet):
         return {"product_id": self.kwargs["product_pk"]}
 
     serializer_class = ProductImageSerializer
+
+
+class ProductReviewViewSet(ModelViewSet):
+    def get_queryset(self):
+        return ProductReview.objects.select_related("product").filter(
+            product_id=self.kwargs["product_pk"]
+        )
+
+    serializer_class = ProductReviewSerializer
 
 
 class CustomerViewSet(ModelViewSet):

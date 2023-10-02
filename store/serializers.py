@@ -11,6 +11,7 @@ from store.models import (
     OrderItem,
     Product,
     ProductImage,
+    ProductReview,
 )
 
 
@@ -19,7 +20,7 @@ class CollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ["id", "title", "product_count"]
+        fields = ["id", "title", "product_count", "image_url"]
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -47,6 +48,12 @@ class ProductSerializer(serializers.ModelSerializer):
             "collection",
             "images",
         ]
+
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductReview
+        fields = "__all__"
 
 
 class CustomerSerializer(serializers.ModelSerializer):
