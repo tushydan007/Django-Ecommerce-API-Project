@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+
 from django.db.models import Count
 from rest_framework.mixins import (
     CreateModelMixin,
@@ -125,9 +127,21 @@ class ProductReviewViewSet(ModelViewSet):
 
 
 class CustomerViewSet(ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = Customer.objects.select_related("user").all()
     serializer_class = CustomerSerializer
+
+    @action(detail=False, methods=["GET", "PUT"], permission_classes=[IsAuthenticated])
+    def me(self, request, *args, **kwargs):
+        customer = Customer.objects.get(user_id=self.request.user)
+        if request.method == "GET":
+            serializer = CustomerSerializer(customer)
+            return Response(serializer.data)
+        elif request.method == "PUT":
+            serializer = CustomerSerializer(customer, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         if Order.objects.filter(customer_id=self.kwargs["pk"]).count() > 0:
