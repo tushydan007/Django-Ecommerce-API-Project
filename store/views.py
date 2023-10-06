@@ -39,6 +39,7 @@ from store.serializers import (
     CustomerSerializer,
     OrderItemSerializer,
     OrderSerializer,
+    PatchProductSerializer,
     ProductImageSerializer,
     ProductReviewSerializer,
     ProductSerializer,
@@ -80,6 +81,7 @@ class CollectionProductViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
+    http_method_names = ["get", "patch", "put", "post", "delete", "head", "options"]
     # def get_permissions(self):
     #     if self.request.method in ["GET", "HEAD", "OPTIONS"]:
     #         return [AllowAny()]
@@ -88,7 +90,11 @@ class ProductViewSet(ModelViewSet):
     queryset = (
         Product.objects.select_related("collection").prefetch_related("images").all()
     )
-    serializer_class = ProductSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return PatchProductSerializer
+        return ProductSerializer
 
     def destroy(self, request, *args, **kwargs):
         if OrderItem.objects.filter(product_id=self.kwargs["pk"]).count() > 0:

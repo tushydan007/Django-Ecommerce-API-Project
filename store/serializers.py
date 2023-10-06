@@ -43,10 +43,15 @@ class ProductReviewSerializer(serializers.ModelSerializer):
         return ProductReview.objects.create(product_id=product_id, **validated_data)
 
 
+class PatchProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ["in_cart"]
+
+
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
     reviews = ProductReviewSerializer(many=True, read_only=True)
-    in_cart = serializers.BooleanField(default=False)
 
     class Meta:
         model = Product
@@ -56,11 +61,11 @@ class ProductSerializer(serializers.ModelSerializer):
             "description",
             "price",
             "inventory",
-            "last_update",
             "collection",
-            "images",
             "in_cart",
+            "images",
             "reviews",
+            "manufacturer",
         ]
 
 

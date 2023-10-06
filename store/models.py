@@ -25,6 +25,7 @@ class Product(models.Model):
     collection = models.ForeignKey(
         Collection, on_delete=models.PROTECT, related_name="products"
     )
+    manufacturer = models.CharField(max_length=255, default="Apple")
     in_cart = models.BooleanField(default=False)
 
 
