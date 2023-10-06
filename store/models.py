@@ -25,6 +25,7 @@ class Product(models.Model):
     collection = models.ForeignKey(
         Collection, on_delete=models.PROTECT, related_name="products"
     )
+    in_cart = models.BooleanField(default=False)
 
 
 class ProductReview(models.Model):
