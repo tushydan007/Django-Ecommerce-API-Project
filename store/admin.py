@@ -55,7 +55,7 @@ class ProductAdmin(admin.ModelAdmin):
         "last_update",
         "collection",
     ]
-    list_editable = ["price", "description", "inventory"]
+    list_editable = ["price", "title", "inventory"]
     search_fields = ["title", "price", "last_update"]
     inlines = [ProductImageInline]
 

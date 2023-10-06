@@ -80,10 +80,10 @@ class CollectionProductViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
-    def get_permissions(self):
-        if self.request.method in ["GET", "HEAD", "OPTIONS"]:
-            return [AllowAny()]
-        return [IsAdminUser()]
+    # def get_permissions(self):
+    #     if self.request.method in ["GET", "HEAD", "OPTIONS"]:
+    #         return [AllowAny()]
+    #     return [IsAdminUser()]
 
     queryset = (
         Product.objects.select_related("collection").prefetch_related("images").all()
@@ -131,8 +131,14 @@ class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.select_related("user").all()
     serializer_class = CustomerSerializer
 
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Customer.objects.select_related("user").all()
+
+        return Customer.objects.select_related("user").get(user_id=self.request.user.id)
+
     @action(detail=False, methods=["GET", "PUT"], permission_classes=[IsAuthenticated])
-    def me(self, request, *args, **kwargs):
+    def me(self, request):
         customer = Customer.objects.get(user_id=self.request.user)
         if request.method == "GET":
             serializer = CustomerSerializer(customer)

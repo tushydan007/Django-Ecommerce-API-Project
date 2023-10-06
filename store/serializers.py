@@ -33,8 +33,16 @@ class ProductImageSerializer(serializers.ModelSerializer):
         return ProductImage.objects.create(product_id=product_id, **validated_data)
 
 
+class ProductReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductReview
+        fields = "__all__"
+
+
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
+    reviews = ProductReviewSerializer(many=True, read_only=True)
+    in_cart = serializers.BooleanField(default=False)
 
     class Meta:
         model = Product
@@ -47,13 +55,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "last_update",
             "collection",
             "images",
+            "in_cart",
+            "reviews",
         ]
-
-
-class ProductReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductReview
-        fields = "__all__"
 
 
 class CustomerSerializer(serializers.ModelSerializer):
