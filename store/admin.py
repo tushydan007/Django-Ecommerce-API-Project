@@ -46,18 +46,27 @@ class ProductImageInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    actions = ["update_incart_quantityincart"]
     list_display = [
         "id",
         "title",
+        "in_cart",
+        "quantity_incart",
         "description",
         "price",
         "inventory",
         "last_update",
         "collection",
+        "manufacturer",
     ]
     list_editable = ["price", "title", "inventory"]
     search_fields = ["title", "price", "last_update"]
     inlines = [ProductImageInline]
+
+    @admin.action(description="update_incart_quantityincart")
+    def update_incart_quantityincart(self, request, queryset):
+        count = queryset.update(in_cart=False, quantity_incart=0)
+        self.message_user(request, f"{count} Products were Successfully Updated")
 
 
 @admin.register(Customer)

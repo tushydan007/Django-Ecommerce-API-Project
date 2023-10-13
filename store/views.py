@@ -88,7 +88,10 @@ class ProductViewSet(ModelViewSet):
     #     return [IsAdminUser()]
 
     queryset = (
-        Product.objects.select_related("collection").prefetch_related("images").all()
+        Product.objects.select_related("collection")
+        .prefetch_related("images")
+        .order_by("title")
+        .all()
     )
 
     def get_serializer_class(self):

@@ -66,6 +66,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "images",
             "reviews",
             "manufacturer",
+            "quantity_incart",
         ]
 
 
