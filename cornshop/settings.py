@@ -162,6 +162,7 @@ DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
     "SERIALIZERS": {
         "user_create": "user.serializers.UserCreateSerializer",
+        "current_user": "user.serializers.LoggedInUserSerializer",
     },
 }
 CORS_ALLOWED_ORIGINS = [

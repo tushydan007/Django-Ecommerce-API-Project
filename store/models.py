@@ -27,7 +27,7 @@ class Product(models.Model):
     )
     manufacturer = models.CharField(max_length=255, default="Apple")
     in_cart = models.BooleanField(default=False)
-    quantity_incart = models.PositiveSmallIntegerField()
+    
 
 
 class ProductReview(models.Model):

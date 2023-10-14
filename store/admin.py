@@ -51,7 +51,6 @@ class ProductAdmin(admin.ModelAdmin):
         "id",
         "title",
         "in_cart",
-        "quantity_incart",
         "description",
         "price",
         "inventory",
